@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/target/
+application.properties
+credentials.json
+/.idea/
+pom.xml
+*.iml
+
