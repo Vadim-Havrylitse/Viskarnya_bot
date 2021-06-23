@@ -5,15 +5,19 @@ import lombok.SneakyThrows;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import service.UserRegistration;
+import service.UserRegistrationClass;
+
+import java.util.Objects;
 
 import static util.ApplicationProperties.getProperties;
 
 public class TelegramApi extends TelegramLongPollingBot {
-    private static final
+    private final UserRegistrationClass userRegistration;
 
 
     public TelegramApi() {
-        this.
+        this.userRegistration = UserRegistration.of();
     }
 
     @Override
@@ -29,12 +33,19 @@ public class TelegramApi extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-//        SendPhoto sendPhoto = new SendPhoto();
-//        sendPhoto.setChatId(String.valueOf(update.getMessage().getChatId()));
-//        sendPhoto.setPhoto((InputFile)GoogleApi.reed().get(0));
+        if (update.hasMessage() && update.getMessage().getText().startsWith("/start")){
+            userRegistration.execute(update.getMessage().getChatId(), null,this);
+        }
+
+
+    }
+
+    @SneakyThrows
+    public void sendNewMessage (Long chatId, String text){
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(String.valueOf(update.getMessage().getChatId()));
-        sendMessage.setText((String) GoogleApi.reed().get(0));
-        sendApiMethod(sendMessage);
+        sendMessage.setText(text);
+        sendMessage.setChatId(chatId.toString());
+        sendMessage.enableHtml(true);
+        execute(sendMessage);
     }
 }

@@ -1,10 +1,12 @@
 package service;
 
+import controller.TelegramApi;
+
 public interface UserRegistration {
 
-    public void execute (Long chatId);
+    public void execute (Long chatId, String text, TelegramApi controller);
 
-    public static UserVoteBlockClass of(){
-        return new UserVoteBlockClass();
+    public static UserRegistrationClass of(){
+        return new UserRegistrationClass();
     }
 }

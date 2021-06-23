@@ -4,7 +4,7 @@ import model.ModelElementId;
 
 import java.util.Optional;
 
-public interface BaseRepository <R extends ModelElementId<ID>, ID>{
+public interface BaseRepository <ID, R extends ModelElementId<ID>>{
 
     public void deleteAll();
 

@@ -43,7 +43,7 @@ public class GoogleApi {
         Sheets service = new Sheets.Builder(httpTransport, JacksonFactory.getDefaultInstance(), getCredentials())
                 .setApplicationName("Viscarnya_bot")
                 .build();
-        //       Spreadsheet spreadsheetMetadata = service.spreadsheets().get(spreadSheetsId).execute();
+//        Spreadsheet spreadsheetMetadata = service.spreadsheets().get(spreadSheetsId).execute();
 //        List<Sheet> sheets = spreadsheetMetadata.getSheets();
 //        sheets.forEach(sheet -> System.out.println(((SheetProperties) (sheet.get("util"))).get("title")));
         ValueRange valueRange = service.spreadsheets().values()

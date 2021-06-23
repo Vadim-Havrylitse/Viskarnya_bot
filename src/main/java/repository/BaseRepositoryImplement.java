@@ -5,7 +5,7 @@ import model.ModelElementId;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BaseRepositoryImplement<R extends ModelElementId<ID>, ID> implements BaseRepository<R, ID> {
+public class BaseRepositoryImplement<ID, R extends ModelElementId<ID>> implements BaseRepository<ID, R> {
 
     private final Map<ID, R> repository = new ConcurrentHashMap<>();
 
