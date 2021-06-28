@@ -1,20 +1,16 @@
 package model;
 
 import lombok.Data;
-import lombok.SneakyThrows;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 
-import java.net.URL;
 
 @Data
 public class WhiskeyBottle implements ModelElementId<String> {
 
     private String nameBottle;
+    private InputFile icon;
     private String description;
 
-    @SneakyThrows
-    public WhiskeyBottle (URL url, String description){
-        this.description = description;
-    }
 
     @Override
     public String getId() {

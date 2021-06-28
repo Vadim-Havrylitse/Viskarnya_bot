@@ -1,10 +1,13 @@
 package controller;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Lists;
+import com.google.api.services.drive.Drive;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.Sheet;
@@ -14,11 +17,17 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import lombok.SneakyThrows;
+import model.WhiskeyBottle;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import repository.BaseRepository;
+import repository.BaseRepositoryFactory;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import static util.ApplicationProperties.getProperties;
 
 public class GoogleApi {
@@ -36,7 +45,7 @@ public class GoogleApi {
     }
 
     @SneakyThrows
-    public static List reed () {
+    public static void reed() {
         final String spreadSheetsId = getProperties().getProperty("spreadSheetsId");
         final String spreadSheetsRange = getProperties().getProperty("spreadSheetsRange");
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -50,17 +59,31 @@ public class GoogleApi {
                 .get(spreadSheetsId, spreadSheetsRange)
                 .execute();
         List<List<Object>> values = valueRange.getValues();
-        if (values == null || values.isEmpty()){
+        if (values == null || values.isEmpty()) {
             System.out.println("EMPTY SHEETS!!!");
         }
-        ArrayList<Object> objectsInRow = new ArrayList<>();
-
+        BaseRepository whiskeyBase = BaseRepositoryFactory.of(WhiskeyBottle.class);
         for (List row : values) {
-            if (row.isEmpty()){ continue;}
-            objectsInRow.addAll(row);
+            if (row.isEmpty()) {
+                continue;
+            }
+            WhiskeyBottle whiskeyBottle = new WhiskeyBottle();
+            whiskeyBottle.setNameBottle(String.valueOf(row.get(0)));
+            whiskeyBottle.setIcon(new InputFile().setMedia(loadIcon((String) row.get(1)), whiskeyBottle.getNameBottle()));
+            whiskeyBottle.setDescription(String.valueOf(row.get(2)));
         }
-        return objectsInRow;
 
+    }
+
+    public static InputStream loadIcon(String url) throws Exception {
+        Drive service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(),
+                                            JacksonFactory.getDefaultInstance(),
+                                            getCredentials())
+                .setApplicationName("viskarnya-bot")
+                .build();
+
+        HttpResponse resp = service.getRequestFactory().buildGetRequest(new GenericUrl(new URI(url))).execute();
+        return resp.getContent();
     }
 
 
