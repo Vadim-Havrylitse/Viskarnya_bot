@@ -8,6 +8,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Lists;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.Sheet;
@@ -31,12 +32,11 @@ import java.util.List;
 import static util.ApplicationProperties.getProperties;
 
 public class GoogleApi {
-    private static final String CREDENTIALS_FILEPATH = "/credentials.json";
-
+    private static final String CREDENTIALS_SHEETS = "/credentials.json";
 
     @SneakyThrows
-    private static HttpRequestInitializer getCredentials() {
-        InputStream in = GoogleApi.class.getResourceAsStream(CREDENTIALS_FILEPATH);
+    private static HttpRequestInitializer getCredentials(String filePath) {
+        InputStream in = GoogleApi.class.getResourceAsStream(filePath);
         GoogleCredentials credentials = GoogleCredentials.fromStream(in)
                 .createScoped(Lists.newArrayList(Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY)));
 
@@ -49,7 +49,7 @@ public class GoogleApi {
         final String spreadSheetsId = getProperties().getProperty("spreadSheetsId");
         final String spreadSheetsRange = getProperties().getProperty("spreadSheetsRange");
         final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        Sheets service = new Sheets.Builder(httpTransport, JacksonFactory.getDefaultInstance(), getCredentials())
+        Sheets service = new Sheets.Builder(httpTransport, JacksonFactory.getDefaultInstance(), getCredentials(CREDENTIALS_SHEETS))
                 .setApplicationName("Viscarnya_bot")
                 .build();
 //        Spreadsheet spreadsheetMetadata = service.spreadsheets().get(spreadSheetsId).execute();
@@ -71,6 +71,7 @@ public class GoogleApi {
             whiskeyBottle.setNameBottle(String.valueOf(row.get(0)));
             whiskeyBottle.setIcon(new InputFile().setMedia(loadIcon((String) row.get(1)), whiskeyBottle.getNameBottle()));
             whiskeyBottle.setDescription(String.valueOf(row.get(2)));
+            whiskeyBase.save(whiskeyBottle);
         }
 
     }
@@ -78,7 +79,7 @@ public class GoogleApi {
     public static InputStream loadIcon(String url) throws Exception {
         Drive service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(),
                                             JacksonFactory.getDefaultInstance(),
-                                            getCredentials())
+                                            getCredentials(CREDENTIALS_SHEETS))
                 .setApplicationName("viskarnya-bot")
                 .build();
 

@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import service.UserRegistration;
 import service.UserRegistrationClass;
 
+import java.io.File;
 import java.util.Objects;
 
 import static util.ApplicationProperties.getProperties;
@@ -53,7 +54,9 @@ public class TelegramApi extends TelegramLongPollingBot {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setChatId(chatId.toString());
         sendPhoto.setPhoto(new InputFile(GoogleApi.loadIcon(
-                "https://drive.google.com/file/d/1aAEgBg-ihJCohNriZ_9R45FsZTzFcBzA/view?usp=sharing"), "wwww"));
+                "https://drive.google.com/drive/u/0/folders/1lDfetSdYwVKjUPhZmuTPdGgpjx7ibM6K/IMG_20210301_150129.jpg"),
+                "wer2"));
+        //sendPhoto.setPhoto(new InputFile(TelegramApi.class.getResourceAsStream("/photo.jpg"), "sdfss"));
         execute(sendPhoto);
 
     }

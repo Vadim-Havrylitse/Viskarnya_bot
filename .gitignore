@@ -5,6 +5,5 @@
 application.properties
 credentials.json
 /.idea/
-pom.xml
 *.iml
 
